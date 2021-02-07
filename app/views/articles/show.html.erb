@@ -1,0 +1,51 @@
+<div class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-8">
+      <h1><%= @article.title %></h1>
+
+      <p class="card-text"><%= simple_format @article.body %></p>
+           <p class="card-text">
+            <small class="text-muted">更新日：<%= @article.updated_at.strftime("%Y-%m-%d") %></small>
+          </p>
+          <% if current_user.already_favorited?(@article) %>
+            <%= link_to article_favorites_path(@article), method: :delete do %>
+              <i class="fas fa-heart"></i>
+            <% end %>
+          <% else %>
+              <%= link_to article_favorites_path(@article), method: :create do %>
+              <i class="far fa-heart"></i>
+              <% end %>
+          <% end %>
+          <%= @article.favorites.count %>
+          
+          <% if current_user %>
+      <%= form_with(model: [@article, @comment], local: true) do |form| %>
+        <%= form.text_area :text, placeholder: "コメントする", rows: "2" %>
+        <%= form.submit "送信" %>
+      <% end %>
+    <% else %>
+      <strong><p>※※※ コメントの投稿には新規登録/ログインが必要です ※※※</p></strong>
+    <% end %>
+
+    <h4>コメント一覧</h4>
+      <% if @comments %>
+        <% @comments.each do |comment| %>
+          <p>
+            <strong><%= link_to comment.user.name, "/users/#{comment.user_id}" %>：</strong>
+            <%= comment.text %>
+          </p>
+        <% end %>
+      <% end %>
+      <div class="col-4">
+           <% if @article.user == current_user %>
+            <%= link_to '編集', edit_article_path(@article), class: "btn btn-success" %>
+            <%= link_to '削除', article_path(@article), method: :delete, class: "btn btn-danger" %>
+          <% end %>
+          </div>
+           
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
